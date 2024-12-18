@@ -50,7 +50,6 @@ POSSIBILITY OF SUCH DAMAGE.
 //! \{
 
 #ifdef TARGET_SIMD_X86
-
 namespace vvdec
 {
 

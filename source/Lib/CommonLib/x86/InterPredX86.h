@@ -57,7 +57,6 @@ namespace vvdec
 
 #if ENABLE_SIMD_OPT_INTER
 #ifdef TARGET_SIMD_X86
-
 template<X86_VEXT vext>
 inline void PaddBIO_SIMD( const Pel* refPel, Pel* dstPel, unsigned width, const int shift )
 {

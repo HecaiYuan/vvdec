@@ -74,6 +74,17 @@ function( _emscripten_enable_wasm_simd128 )
   endif()
 endfunction()
 
+function( _set_if_compiler_supports_lasx_flag )
+  set(LASX_COMPILATION_TEST "
+#include <lasxintrin.h>
+int main() {
+  __m256i test = __lasx_xvreplgr2vr_w(0);
+  return 0;
+}")
+  set(CMAKE_REQUIRED_FLAGS "-mlasx")
+  check_c_source_compiles( "${LASX_COMPILATION_TEST}" LASX_COMPILATION_C_TEST_COMPILED )
+endfunction()
+
 function( detect_target_architecture output_var )
   # try to detect the actual target architecture
   if( ${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten" )
@@ -112,6 +123,8 @@ function( _append_cpu_type_guess output_list input_str )
     list( APPEND ret "X86" )
   elseif( ${input_lower} MATCHES "aarch64\|arm")
     list( APPEND ret "ARM" )
+  elseif( ${input_lower} MATCHES "loongarch64")
+    list( APPEND ret "LOONGARCH64" )
   endif()
 
   set( ${output_list} ${ret} PARENT_SCOPE )
