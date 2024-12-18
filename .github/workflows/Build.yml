@@ -58,6 +58,11 @@ jobs:
               os: macos-latest,
               osx_arch: arm64
             }
+          - {
+              name: "Ubuntu 24.04",
+              os: ubuntu-24.04
+              osx_arch: loongarch64
+            }
     env:
       CMAKE_GENERATOR: "${{ matrix.config.generators }}"
     steps:
@@ -65,8 +70,19 @@ jobs:
     - run: git fetch --prune --unshallow
 
     - name: Ubuntu/Mac/MinGW build
-      if: ${{ !contains( matrix.config.generators, 'Visual Studio' ) }}
+      if: ${{ !contains( matrix.config.generators, 'Visual Studio' ) && matrix.config.osx_arch == 'loongarch64' }}
       run: |
+        mkdir build
+        cd build
+        cmake .. -DCMAKE_BUILD_TYPE=Release "-DCMAKE_OSX_ARCHITECTURES=${{ matrix.config.osx_arch }}"
+        cmake --build .
+
+    - name: loongarch64 build
+      if ${{ matrix.config.osx_arch == 'loongarch64' }}
+      run: |
+        sudo apt-get update
+        sudo apt-get -y install gcc-14-loongarch64-linux-gnu g++-14-loongarch64-linux-gnu
+        export CC=gcc-14-loongarch64-linux-gnu CXX=g++-14-loongarch64-linux-gnu
         mkdir build
         cd build
         cmake .. -DCMAKE_BUILD_TYPE=Release "-DCMAKE_OSX_ARCHITECTURES=${{ matrix.config.osx_arch }}"
